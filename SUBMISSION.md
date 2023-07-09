@@ -24,6 +24,23 @@
 ## Run
 
 ### Locally
+Java version used: openjdk version "11.0.19" 2023-04-18
+
+#### Run jar
+java -jar calendly-0.0.1-SNAPSHOT.jar
+
+#### Build from sources
+1. git clone https://github.com/sashidhar/coding-project.git
+2. cd coding-project
+3. mvn clean install
+4. java -jar target/calendly-0.0.1-SNAPSHOT.jar
+
+GET users
+```
+curl --location 'http://localhost:8080/v1/users'
+```
+
+See curl commands or Postman collection below for all the APIs.
 
 ### Remote
 
@@ -79,11 +96,12 @@ curl --location 'http://localhost:8080/v1/availability' \
 ```
 ```
 curl --location 'http://localhost:8080/v1/availability' \
+--header 'Content-Type: application/json' \
 --data '[
     {
         "_date": "2023-07-03",
-        "_start": "19:00:00",
-        "_end": "19:30:00",
+        "_start": "16:00:00",
+        "_end": "17:00:00",
         "userid": 2
     }
 ]'
@@ -93,6 +111,8 @@ Show availability for a user (GET)
 
 ```
 curl --location 'http://localhost:8080/v1/availability?user_id=1&date=2023-07-03'
+
+curl --location 'http://localhost:8080/v1/availability?user_id=2&date=2023-07-03'
 ```
 
 Show overlap between two users for a date (GET)
@@ -116,6 +136,11 @@ curl --location 'http://localhost:8080/v1/recurring' \
 "occurrences": 3
 }
 '
+```
+
+Check availability after adding recurring availability 
+```
+curl --location 'http://localhost:8080/v1/availability?user_id=1&date=2023-07-03'
 ```
 
 Deleting availability for a user (DELETE)
