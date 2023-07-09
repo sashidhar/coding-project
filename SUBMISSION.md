@@ -141,6 +141,8 @@ curl --location 'http://localhost:8080/v1/recurring' \
 Check availability after adding recurring availability 
 ```
 curl --location 'http://localhost:8080/v1/availability?user_id=1&date=2023-07-03'
+curl --location 'http://localhost:8080/v1/availability?user_id=1&date=2023-07-10'
+curl --location 'http://localhost:8080/v1/availability?user_id=1&date=2023-07-17'
 ```
 
 Deleting availability for a user (DELETE)
@@ -152,7 +154,7 @@ curl --location --request DELETE 'http://localhost:8080/v1/availability' \
 {
 "_date": "2023-07-03",
 "_start": "20:40:00",
-"_end": "21:00:00",
+"_end": "21:10:00",
 "userid": 1
 }
 '
