@@ -1,7 +1,7 @@
 package co.harbor.calendly.repository;
 
-import co.harbor.calendly.model.OverlappingAvailability;
 import co.harbor.calendly.entity.UserAvailability;
+import co.harbor.calendly.model.OverlappingAvailability;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,8 +20,7 @@ public interface IAvailabilityRepository extends JpaRepository<UserAvailability,
 
     Page<UserAvailability> findByUserid(@Param("userid") Integer userid, Pageable pageable);
 
-    @Query(value = "SELECT id, _date, _start, _end, userid FROM user_availability WHERE userid = :userid AND _date = :date", nativeQuery = true)
-    List<UserAvailability> findAvailabilityByUseridAndDate(Integer userid, Date date);
+    List<UserAvailability> findBy_dateAndUserid(@Param("_date") Date date, @Param("userid") Integer userid);
 
     @Query(value =
             "SELECT distinct\n" +

@@ -1,9 +1,9 @@
 package co.harbor.calendly.controller.helper;
 
+import co.harbor.calendly.entity.UserAvailability;
 import co.harbor.calendly.model.Interval;
 import co.harbor.calendly.model.OverlappingAvailability;
 import co.harbor.calendly.model.RecurringUserAvailability;
-import co.harbor.calendly.entity.UserAvailability;
 import co.harbor.calendly.repository.IAvailabilityRepository;
 import co.harbor.calendly.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,7 @@ public class AvailabilityHelper {
     }
 
     public List<UserAvailability> findAvailabilityForAUserAndDate(Integer userId, String date) throws ParseException {
-        return availabilityRepository.findAvailabilityByUseridAndDate(userId, Date.valueOf(date));
+        return availabilityRepository.findBy_dateAndUserid(Date.valueOf(date), userId);
     }
 
     @Transactional
@@ -87,19 +87,27 @@ public class AvailabilityHelper {
 
         List<UserAvailability> updatedAvailabilityList = new ArrayList<>();
 
-        // There are 3 cases of overlap
-        // Case 1. Deletion availability is exactly the same as existing existingAvailability, do nothing, this means no new existingAvailability is added to updatedAvailabilityList
-        // Case 2. Deletion availability contained within the existing existingAvailability
-        // Case 3. Deletion availability partially overlapping with existing existingAvailability
+        // There are 4 cases of overlap
+        // Case 1. No overlap
+        // Case 2. Deletion availability is exactly the same as existing existingAvailability, do nothing, this means no new existingAvailability is added to updatedAvailabilityList
+        // Case 3. Deletion availability contained within the existing existingAvailability
+        // Case 4. Deletion availability partially overlapping with existing existingAvailability
 
-        if ( deletionStartTime >= availabilityStartTime && deletionEndTime <= availabilityEndTime) {
-             // Case 1 and Case 2
+        if ( (deletionStartTime > availabilityStartTime && deletionEndTime > availabilityStartTime
+                && deletionStartTime > availabilityEndTime && deletionEndTime > availabilityEndTime)
+                ||
+             ( deletionStartTime < availabilityStartTime && deletionEndTime < availabilityStartTime
+                && deletionStartTime < availabilityEndTime && deletionEndTime < availabilityEndTime)
+        ) {
+            updatedAvailabilityList.add(newAvailability(existingAvailability.get_date(), existingAvailability.get_start(), existingAvailability.get_end(), existingAvailability.getUserid()));
+        } else if ( deletionStartTime >= availabilityStartTime && deletionEndTime <= availabilityEndTime) {
+             // Case 2 and Case 3
              updatedAvailabilityList.addAll(computeUpdatedAvailabilityForContainedDeletion(existingAvailability, availabilityDeletion));
          } else if (deletionStartTime >= availabilityStartTime &&  deletionEndTime > availabilityEndTime) {
-             // Case 3
+             // Case 4
              updatedAvailabilityList.addAll(computeUpdatedAvailabilityForPartialOverlap1(existingAvailability, availabilityDeletion));
          } else if (deletionStartTime < availabilityStartTime && deletionEndTime < availabilityEndTime) {
-            // Case 3
+            // Case 4
             updatedAvailabilityList.addAll(computeUpdatedAvailabilityForPartialOverlap2(existingAvailability, availabilityDeletion));
         }
 
@@ -160,13 +168,13 @@ public class AvailabilityHelper {
 
     // Get existing availability for the given user and date
     private List<UserAvailability> getExistingAvailabilityForUser(Integer userid, Date date) {
-        return availabilityRepository.findAvailabilityByUseridAndDate(userid, date);
+        return availabilityRepository.findBy_dateAndUserid(date, userid);
     }
 
     public void addRecurringAvailability(RecurringUserAvailability availability) {
         List<UserAvailability> availabilities = computeRecurringAvailability(availability);
 
-        availabilityRepository.saveAll(availabilities);
+        availabilityRepository.saveAllAndFlush(availabilities);
     }
 
     List<UserAvailability> computeRecurringAvailability(RecurringUserAvailability availability) {
@@ -186,7 +194,7 @@ public class AvailabilityHelper {
         return availabilities;
     }
 
-    UserAvailability newAvailability(Date date, Time start, Time end, Integer userid) {
+    private UserAvailability newAvailability(Date date, Time start, Time end, Integer userid) {
         UserAvailability newAvailability = new UserAvailability();
         newAvailability.set_date(date);
         newAvailability.set_start(start);
