@@ -42,8 +42,11 @@ curl --location 'http://localhost:8080/v1/users'
 
 See curl commands or Postman collection below for all the APIs.
 
-### Remote
-
+#### Run using Docker
+1. git clone https://github.com/sashidhar/coding-project.git
+2. cd coding-project
+3.  docker build -t calendly-app-2 .
+4.  docker run -p 127.0.0.1:8080:8080 calendly-app-2
 
 ## Tests
 
