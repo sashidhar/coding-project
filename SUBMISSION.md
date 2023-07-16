@@ -40,7 +40,6 @@ GET users
 curl --location 'http://localhost:8080/v1/users'
 ```
 
-See curl commands or Postman collection below for all the APIs.
 
 #### Run using Docker
 1. git clone https://github.com/sashidhar/coding-project.git
@@ -168,10 +167,6 @@ Check updated availability for above user after deleting availability (GET)
 ```
 curl --location 'http://localhost:8080/v1/availability?user_id=1&date=2023-07-03'
 ```
-
-### Import below collection into Postman for full collection of APIs.
-
-https://api.postman.com/collections/27446545-3d6efec7-509d-40b9-a235-61ec409c4055?access_key=PMAT-01H4R5AY87YCD1D5DHMHE7SEQR
 
 
 ### Unit tests
