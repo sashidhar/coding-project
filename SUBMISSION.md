@@ -44,8 +44,9 @@ curl --location 'http://localhost:8080/v1/users'
 #### Run using Docker
 1. git clone https://github.com/sashidhar/coding-project.git
 2. cd coding-project
-3.  docker build -t calendly-app-2 .
-4.  docker run -p 127.0.0.1:8080:8080 calendly-app-2
+3. mvn clean install
+4. docker build -t calendly-app-2 .
+5. docker run -p 127.0.0.1:8080:8080 calendly-app-2
 
 ## Tests
 
